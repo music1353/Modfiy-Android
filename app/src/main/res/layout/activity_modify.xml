@@ -9,7 +9,6 @@
     tools:context="com.example.s960405s.modify.ModifyActivity">
 
     // 返回or確定功能列
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -21,7 +20,19 @@
             android:layout_height="wrap_content"
             android:background="#000"
             android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme" />
+            android:theme="?attr/actionBarTheme" >
+
+        <Button
+            android:id="@+id/btn_complete"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:text="完成"
+            android:layout_gravity="right"
+            android:background="@drawable/complete_btn"
+            />
+
+        </android.support.v7.widget.Toolbar>
+
 
     </LinearLayout>
 

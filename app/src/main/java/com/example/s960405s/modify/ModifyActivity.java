@@ -1,24 +1,29 @@
 package com.example.s960405s.modify;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.HandlerThread;
+import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 
 public class ModifyActivity extends AppCompatActivity {
@@ -32,7 +37,7 @@ public class ModifyActivity extends AppCompatActivity {
     int rotateTuggle = 0; // 切換rotate in scroll
     private ImageView iv_preImage; // 預覽圖
     private Toolbar tb_nav;
-    private Button btn_modify, btn_rotate, btn_cut;
+    private Button btn_modify, btn_rotate, btn_cut, btn_complete;
     private LinearLayout ll_fontContainer, ll_scroll;
 
     @Override
@@ -49,11 +54,8 @@ public class ModifyActivity extends AppCompatActivity {
         initLinearSlider(); // ll_scroll滑動
 
         Uri uri = getIntent().getData(); // get image uri
-        // RGB_565壓縮法(減少RGB位及去掉透明度)
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
         try {
-            preImage = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, options);
+            preImage = RGB565(uri);
             iv_preImage.setImageBitmap(preImage);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -84,6 +86,31 @@ public class ModifyActivity extends AppCompatActivity {
                 rotateTuggle++;
             }
         });
+
+        // set complete btn
+        btn_complete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Bitmap bitmap = getCurrentBitmap();
+                Intent intent = new Intent(ModifyActivity.this, CompleteActivity.class);
+
+                File file = tempFileImage(getApplicationContext(), bitmap, "temp");
+                recycleBitmap(bitmap);
+                Uri imageUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.s960405s.modify.provider", file);
+
+                intent.setData(imageUri);
+                startActivity(intent);
+                toFinish();
+            }
+        });
+    }
+
+    protected void toFinish() {
+        recycleBitmap(preImage);
+        linear.removeAllViews();
+        params = null;
+        finish();
+        System.gc();
     }
 
     protected void initFindView() {
@@ -92,13 +119,14 @@ public class ModifyActivity extends AppCompatActivity {
         btn_modify = (Button) findViewById(R.id.btn_modify);
         btn_rotate = (Button) findViewById(R.id.btn_rotate);
         btn_cut = (Button) findViewById(R.id.btn_cut);
+        btn_complete = (Button) findViewById(R.id.btn_complete);
         ll_fontContainer = (LinearLayout) findViewById(R.id.ll_fontContainer);
         ll_scroll = (LinearLayout) findViewById(R.id.ll_scroll);
     }
 
     protected void initToolbar() {
         setSupportActionBar(tb_nav);
-        getSupportActionBar().setTitle("修改圖片");
+        getSupportActionBar().setTitle("修time");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tb_nav.setNavigationOnClickListener(new View.OnClickListener() {
@@ -139,6 +167,7 @@ public class ModifyActivity extends AppCompatActivity {
                         case 0:
                             newBitmap = FilterUtils.black_whiteFilter(preImage);
                             iv_preImage.setImageBitmap(newBitmap);
+
                             break;
                         case 1:
                             newBitmap = FilterUtils.nostalgiaFilter(preImage);
@@ -227,7 +256,7 @@ public class ModifyActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     // 拿到當下的bitmap
-                    Bitmap bitmap = ((BitmapDrawable)iv_preImage.getDrawable()).getBitmap();
+                    Bitmap bitmap = getCurrentBitmap();
 
                     switch (v.getId()) {
                         case 0:
@@ -254,4 +283,52 @@ public class ModifyActivity extends AppCompatActivity {
             });
         }
     }
+
+
+    // 拿到當下iv_preImage的bitmap
+    protected Bitmap getCurrentBitmap() {
+        Bitmap bitmap = ((BitmapDrawable)iv_preImage.getDrawable()).getBitmap();
+        return bitmap;
+    }
+
+    // RGB_565壓縮法(減少RGB位及去掉透明度)
+    protected Bitmap RGB565(Uri uri) throws FileNotFoundException {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, options);
+        return bitmap;
+    }
+
+    // 暫時儲存圖片
+    public static File tempFileImage(Context context, Bitmap bitmap, String name) {
+
+        File folder = new File(Environment.getExternalStorageDirectory() + "/modify/temp/");
+        if(!folder.exists()){
+            folder.mkdirs();
+        }
+        File imageFile = new File(folder, name+".jpg");
+
+        OutputStream os;
+        try {
+            os = new FileOutputStream(imageFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            Log.e(context.getClass().getSimpleName(), "Error writing file", e);
+        }
+
+        // return imageFile.getAbsolutePath();
+        return imageFile;
+    }
+
+
+    // 回收bitmap內存
+    protected void recycleBitmap(Bitmap bitmap) {
+        if(!bitmap.isRecycled()){
+            bitmap.recycle(); //回收圖片所占的記憶體
+            System.gc(); //提醒系統及時回收
+        }
+    }
+
 }
