@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#222"
+    android:background="#111"
     tools:context="com.example.s960405s.modify.ModifyActivity">
 
     // 返回or確定功能列
@@ -39,11 +39,72 @@
 
     </LinearLayout>
 
+    // 選擇濾鏡Linear
+    <HorizontalScrollView
+        android:id="@+id/hsv_filterscroll"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/ll_scroll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"></LinearLayout>
+
+    </HorizontalScrollView>
+
     // 濾鏡or裁切功能列
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="1"
+        android:id="@+id/ll_fontContainer">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btn_modify"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#000000"
+                android:textColor="#FFFFFF"
+                android:text="濾鏡 &#xf1a5;" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btn_rotate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#000000"
+                android:textColor="#FFFFFF"
+                android:text="旋轉 &#xf01e;" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btn_cut"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#000000"
+                android:textColor="#FFFFFF"
+                android:text="裁切 &#xf0c4;" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
