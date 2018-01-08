@@ -7,9 +7,11 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 
@@ -80,7 +82,10 @@ public class MainActivity extends AppCompatActivity {
             // 與上次點擊返回鍵時刻作差
             if ((System.currentTimeMillis() - mExitTime) > 2000) {
                 // 大於2000ms則認為是誤操作，使用Toast進行提示
-                Toast.makeText(this, "再按一次離開Modify", Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(this, "再按一次離開Modify", Toast.LENGTH_SHORT);
+                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                if( v != null) v.setGravity(Gravity.CENTER);
+                toast.show();
                 // 並紀錄下本次點擊“返回键”的時刻，以便下次進行判斷
                 mExitTime = System.currentTimeMillis();
             } else {

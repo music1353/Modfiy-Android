@@ -105,14 +105,6 @@ public class ModifyActivity extends AppCompatActivity {
         });
     }
 
-    protected void toFinish() {
-        recycleBitmap(preImage);
-        linear.removeAllViews();
-        params = null;
-        finish();
-        System.gc();
-    }
-
     protected void initFindView() {
         iv_preImage = (ImageView) findViewById(R.id.iv_preImage);
         tb_nav = (Toolbar) findViewById(R.id.tb_nav);
@@ -126,7 +118,7 @@ public class ModifyActivity extends AppCompatActivity {
 
     protected void initToolbar() {
         setSupportActionBar(tb_nav);
-        getSupportActionBar().setTitle("修time");
+        getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tb_nav.setNavigationOnClickListener(new View.OnClickListener() {
@@ -322,13 +314,20 @@ public class ModifyActivity extends AppCompatActivity {
         return imageFile;
     }
 
-
     // 回收bitmap內存
     protected void recycleBitmap(Bitmap bitmap) {
         if(!bitmap.isRecycled()){
             bitmap.recycle(); //回收圖片所占的記憶體
             System.gc(); //提醒系統及時回收
         }
+    }
+
+    protected void toFinish() {
+        recycleBitmap(preImage);
+        linear.removeAllViews();
+        params = null;
+        finish();
+        System.gc();
     }
 
 }
