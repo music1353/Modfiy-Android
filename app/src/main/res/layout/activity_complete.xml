@@ -25,16 +25,6 @@
         android:elevation="30dp">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_facebook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/facebook"
-            android:scaleType="center"
-            fab:fab_colorNormal="#FFF"
-            fab:fab_title="Label on the right"
-            fab:fab_colorPressed="#153" />
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_download"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
