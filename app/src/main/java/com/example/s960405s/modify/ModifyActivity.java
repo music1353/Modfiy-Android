@@ -1,6 +1,7 @@
 package com.example.s960405s.modify;
 
 import android.app.ActivityManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,8 +40,9 @@ public class ModifyActivity extends AppCompatActivity {
     int rotateTuggle = 0; // 切換rotate in scroll
     private ImageView iv_preImage; // 預覽圖
     private Toolbar tb_nav;
-    private Button btn_modify, btn_rotate, btn_cut, btn_complete;
+    private Button btn_modify, btn_rotate, btn_complete;
     private LinearLayout ll_fontContainer, ll_scroll;
+    final int PIC_CROP = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +57,7 @@ public class ModifyActivity extends AppCompatActivity {
 
         initLinearSlider(); // ll_scroll滑動
 
-        Uri uri = getIntent().getData(); // get image uri
+        final Uri uri = getIntent().getData(); // get image uri
         try {
             preImage = RGB565(uri);
             iv_preImage.setImageBitmap(preImage);
@@ -87,6 +91,7 @@ public class ModifyActivity extends AppCompatActivity {
             }
         });
 
+
         // set complete btn
         btn_complete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,12 +110,12 @@ public class ModifyActivity extends AppCompatActivity {
         });
     }
 
+
     protected void initFindView() {
         iv_preImage = (ImageView) findViewById(R.id.iv_preImage);
         tb_nav = (Toolbar) findViewById(R.id.tb_nav);
         btn_modify = (Button) findViewById(R.id.btn_modify);
         btn_rotate = (Button) findViewById(R.id.btn_rotate);
-        btn_cut = (Button) findViewById(R.id.btn_cut);
         btn_complete = (Button) findViewById(R.id.btn_complete);
         ll_fontContainer = (LinearLayout) findViewById(R.id.ll_fontContainer);
         ll_scroll = (LinearLayout) findViewById(R.id.ll_scroll);
@@ -330,4 +335,19 @@ public class ModifyActivity extends AppCompatActivity {
         System.gc();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PIC_CROP) {
+            if (data != null) {
+                // get the returned data
+                Bundle extras = data.getExtras();
+                // get the cropped bitmap
+                Bitmap selectedBitmap = extras.getParcelable("data");
+
+                iv_preImage.setImageBitmap(selectedBitmap);
+            }
+        }
+    }
 }

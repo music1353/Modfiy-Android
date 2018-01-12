@@ -109,20 +109,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/btn_cut"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#000000"
-                android:textColor="#FFFFFF"
-                android:text="裁切 &#xf0c4;" />
-
-        </LinearLayout>
 
     </LinearLayout>
 
